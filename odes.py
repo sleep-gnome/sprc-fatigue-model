@@ -23,10 +23,10 @@ def sleepode(t, z, theta):
 
     c = math.sin(2 * math.pi / 24 * (t - phi))
 
-    dpdt = -alphaw * (p - beta * u) + xi * k * (c + muw)
+    dpdt = -alphas * (p - beta * (u + 1/etas)) + xi * k * (c - mus)
 
-    dudt = etaw * u
+    dudt = etas * u + 1
 
-    dkdt = lam * k * (1 - k)
+    dkdt = -lam * k
 
     return [dpdt, dudt, dkdt]
