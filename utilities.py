@@ -1,23 +1,43 @@
+import tkinter
+
 import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
 from odes import *
 from matplotlib.patches import Rectangle
-import os
+import subprocess, os, platform
 import csv
 from scipy.integrate import solve_ivp
 import numpy as np
 from tkinter import filedialog
 import matplotlib.colors as colors
+from matplotlib import rcParams
+
+rcParams.update({'figure.autolayout': True})
+
 
 def get_folder_path(path_var):
     path_var.set(filedialog.askdirectory())
+
+
+def open_data_file(flist_dir, findex):
+    flist = os.listdir(flist_dir)
+    file_path = os.path.join(flist_dir, flist[findex])
+    if platform.system() == 'Darwin':           # macOS
+        subprocess.call(('open', file_path))
+    elif platform.system() == 'Windows':        # Windows
+        os.startfile(file_path)
+    else:                                       # linux variants
+        subprocess.call(('xdg-open', file_path))
+
 
 def truncate_colormap(cmap, minval=0.0, maxval=1.0, n=100):
     new_cmap = colors.LinearSegmentedColormap.from_list('trunc({n},{a:.2f},{b:.2f})'.format(n=cmap.name, a=minval, b=maxval),
         cmap(np.linspace(minval, maxval, n)))
     return new_cmap
 
-def run_model(flist_dir, findex):
+
+def run_model(flist_dir, findex, plt_frame):
     flist = os.listdir(flist_dir)
     fpath = os.path.join(flist_dir,flist[findex])
     cumulative_time, wake_state = get_data(fpath)
@@ -28,7 +48,7 @@ def run_model(flist_dir, findex):
 
 #print(R1.get())
 
-# run a loop to get intial conditions
+# run a loop to get initial conditions
     for x in range(1, 10000):
        result = solve_ivp(wakeode, [7.5 + x * 24, 23.5 + x * 24], y0, method="RK45", t_eval=None, dense_output=True,
                            events=None, vectorized=False, args=(theta,), max_step=0.1, rtol=10 ** -8, atol=10 ** -8)
@@ -50,6 +70,12 @@ def run_model(flist_dir, findex):
     t_thisPeriod = cumulative_time[0]
 
 #    tib_time,pvt
+    plt_frame.update()
+    px = 1 / plt.rcParams['figure.dpi']
+    fr_w = plt_frame.winfo_width()
+    fr_h = plt_frame.winfo_height()
+    fig = plt.figure(figsize=(1, 1))
+
 
     for time_start, time_end, sleepwake in zip(cumulative_time, cumulative_time[1:], wake_state):
         if sleepwake:
@@ -59,13 +85,8 @@ def run_model(flist_dir, findex):
             # print last wake concatenated list
             if flag == 1:
                 flag = 0
-
-                fig = plt.figure(1)
-                plt.ylabel('PVT (lapses)', fontsize=20)
-                plt.xlabel('Day', fontsize=20)
                 plt.plot(t_thisPeriod[0:], y_thisPeriod[0, 0:], color='black',linewidth=3)
                 #plt.legend(loc='best')
-                plt.title(flist[findex],fontsize=20)
 
             fun = sleepode
 
@@ -98,12 +119,27 @@ def run_model(flist_dir, findex):
     plt.yticks(np.arange(0, 35, step=5), labels=[str(i*5) for i in range(7)],fontsize=18)
     plt.xlim(t_finalAll[0], t_finalAll[-1])
     plt.ylim(-2, 30)
+    plt.ylabel('PVT (lapses)', fontsize=20)
+    plt.xlabel('Day', fontsize=20)
+    plt.title(flist[findex], fontsize=20)
 
-
+    plt_frame.update()
+    #px =
+    fig.set_size_inches((fr_w*0.01, 420*0.01))
+    #fig.set_size_inches((3,3))
     plt.grid()
-    plt.show()
+    # plt.show()
+
+    canvas = FigureCanvasTkAgg(fig, master=plt_frame)
+    canvas.draw()
+    canvas.get_tk_widget().pack()
+    toolbar = NavigationToolbar2Tk(canvas, plt_frame)
+    toolbar.update()
+    canvas.get_tk_widget().pack()
+    # canvas.draw()
 
     return y_finalAll, t_finalAll
+
 
 def get_data(file_name):
     with open(file_name, 'r') as csv_file:

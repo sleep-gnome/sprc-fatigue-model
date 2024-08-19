@@ -21,8 +21,10 @@ path_var = tk.StringVar()
 
 path_frame = tk.Frame(root, bg='honeydew', bd=0, width=1200, height=90)
 path_frame.place(x=0, y=0)
-plots_frame = tk.Frame(root, bg='lightgrey', bd=0, width=1110, height=450)
+plots_frame = tk.Frame(root, bg='lightgrey', bd=0, width=1060, height=480)
 plots_frame.place(x=140, y=120)
+# plots_frame.grid_columnconfigure(0, weight=1)
+# plots_frame.grid_rowconfigure(0, weight=1)
 left_frame = tk.Frame(root, bg='bisque', bd=0, width=130, height=450)
 left_frame.place(x=0, y=120)
 borderLeft_frame = tk.Frame(root, bg='darkseagreen', bd=0, width=10, height=450)
@@ -154,26 +156,24 @@ baseTime_var.place(x=90,y=70,width=40)
 #fdatatype_box = ttk.Combobox(path_frame, values=[], style="MyButton2.TButton")
 #fdatatype_box.place(x=0,y=60)
 
-show_data_button = ttk.Button(borderTop_frame, command=lambda: [get_folder_path(path_var), update()],
+show_data_button = ttk.Button(borderTop_frame, command=lambda: [open_data_file(path_var.get(), fcombo_box.current())],
                           text="Show Data File", style="MyButton.TButton")
 show_data_button.place(x=140, y=5, width=120, height=30)
 
-save_data_button = ttk.Button(borderTop_frame, command=lambda: [get_folder_path(path_var), update()],
-                          text="Save Data File", style="MyButton.TButton")
-save_data_button.place(x=260, y=5, width=120, height=30)
+# save_data_button = ttk.Button(borderTop_frame, command=lambda: [get_folder_path(path_var), update()],
+#                          text="Save Data File", style="MyButton.TButton")
+# save_data_button.place(x=260, y=5, width=120, height=30)
 
-make_plot_button = ttk.Button(borderTop_frame, command=lambda: [run_model(path_var.get(), fcombo_box.current())], text="Make Plot", style="MyButton.TButton")
+make_plot_button = ttk.Button(borderTop_frame, command=lambda: [run_model(path_var.get(), fcombo_box.current(), plots_frame)], text="Make Plot", style="MyButton.TButton")
 make_plot_button.place(x=380, y=5, width=80, height=30)
 
 make_sleep_predictions_button = ttk.Button(borderTop_frame, command=lambda: [get_folder_path(path_var), update()],
                           text="Make Sleep Predictions", style="MyButton.TButton")
 make_sleep_predictions_button.place(x=460, y=5, width=160, height=30)
 
-print_button = ttk.Button(borderTop_frame, command=lambda: [get_folder_path(path_var), update()],
-                          text="Print Plot", style="MyButton.TButton")
-print_button.place(x=620, y=5, width=80, height=30)
-
-
+# print_button = ttk.Button(borderTop_frame, command=lambda: [get_folder_path(path_var), update()],
+#                          text="Print Plot", style="MyButton.TButton")
+# print_button.place(x=620, y=5, width=80, height=30)
 
 fpath_pretextFolder = tk.Label(path_frame, text=' Folder: ', bg='honeydew',font='bold')
 fpath_pretextFolder.place(x=0, y=0, width=60, height=30)
