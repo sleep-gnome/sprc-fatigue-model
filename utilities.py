@@ -1,5 +1,4 @@
 import tkinter
-
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, NavigationToolbar2Tk)
@@ -75,6 +74,7 @@ def run_model(flist_dir, findex, plt_frame):
     fr_w = plt_frame.winfo_width()
     fr_h = plt_frame.winfo_height()
     fig = plt.figure(figsize=(1, 1))
+    canvas = FigureCanvasTkAgg(fig, master=plt_frame)
 
 
     for time_start, time_end, sleepwake in zip(cumulative_time, cumulative_time[1:], wake_state):
@@ -130,7 +130,6 @@ def run_model(flist_dir, findex, plt_frame):
     plt.grid()
     # plt.show()
 
-    canvas = FigureCanvasTkAgg(fig, master=plt_frame)
     canvas.draw()
     canvas.get_tk_widget().pack()
     toolbar = NavigationToolbar2Tk(canvas, plt_frame)
@@ -165,4 +164,6 @@ def get_data(file_name):
     all_wake.insert(0, 1)
 
     return all_time, all_wake
+
+
 

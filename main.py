@@ -67,35 +67,40 @@ plotOptions_label = tk.Label(left_frame, text='WakeOnset', bg='bisque', font=('b
 plotOptions_label.place(x=0, y=72)
 
 
-
 plotOptions_label = tk.Label(left_frame, text='  Plotting Options  ', bg='tan', font='bold')
 plotOptions_label.place(x=0, y=100)
 
-#def sel():
+# def sel():
 #   selection = "Sleep inertia is " + str(var.get())
-   #selection = "Sleep inertia is " + str(var.get())
+# selection = "Sleep inertia is " + str(var.get())
 #   label.config(text = selection)
-#root = Tk()
-var = IntVar()
-R1 = tk.Radiobutton(left_frame, text="Sleep Inertia", variable=var, value=1, bg='bisque', font='bold')
-#R1 = tk.Radiobutton(left_frame, text="SI", variable=var, value=1, command=sel, bg='bisque', font='bold')
-R1.place(x=0,y=130)
-#R1.pack( anchor = W )
-#R1.pack()
-#R2 = tk.Radiobutton(left_frame, text="no SI", variable=var, value=0, bg='bisque', font='bold')
-#R2 = tk.Radiobutton(left_frame, text="no SI", variable=var, value=0, command=sel, bg='bisque', font='bold')
-#R2.place(x=60,y=120)
-#R2.pack( anchor = W )
-#R3 = Radiobutton(root, text="Option 3", variable=var, value=3, command=sel)
-#R3.pack( anchor = W)
-#label = Label(root)
-#label.pack()
+# root = Tk()
+si_var = IntVar()
+si_box = tk.Checkbutton(left_frame, text='Sleep Inertia', onvalue=1, offvalue=0, variable=si_var,
+                        command=si_toggle(si_var.get()))
 
-varPVTKSS = IntVar()
-RPVT = tk.Radiobutton(left_frame, text="PVT", variable=varPVTKSS, value=1, bg='bisque', font='bold')
-RPVT.place(x=0,y=160)
-RKSS = tk.Radiobutton(left_frame, text="KSS", variable=varPVTKSS, value=0, bg='bisque', font='bold')
-RKSS.place(x=60,y=160)
+si_box.config(bg='bisque', fg='blue', font=("Arial Bold", 12), relief="raised")
+# R1 = tk.Radiobutton(left_frame, text="Sleep Inertia", variable=var, value=1, bg='bisque', font='bold')
+# R1 = tk.Radiobutton(left_frame, text="SI", variable=var, value=1, command=sel, bg='bisque', font='bold')
+si_box.place(x=0, y=130)
+# R1.pack( anchor = W )
+# R1.pack()
+# R2 = tk.Radiobutton(left_frame, text="no SI", variable=var, value=0, bg='bisque', font='bold')
+# R2 = tk.Radiobutton(left_frame, text="no SI", variable=var, value=0, command=sel, bg='bisque', font='bold')
+# R2.place(x=60,y=120)
+# R2.pack( anchor = W )
+# R3 = Radiobutton(root, text="Option 3", variable=var, value=3, command=sel)
+# R3.pack( anchor = W)
+# label = Label(root)
+# label.pack()
+
+var_data_type = tk.StringVar(None, 'pvt')
+radio_pvt = tk.Radiobutton(left_frame, text="PVT", variable=var_data_type, value='pvt', command=pvt_toggle())
+radio_pvt.config(bg='bisque', relief='raised', font=("Arial Bold", 12))
+radio_pvt.place(x=0, y=160)
+radio_kss = tk.Radiobutton(left_frame, text="KSS", variable=var_data_type, value='kss', command=kss_toggle())
+radio_kss.config(bg='bisque', relief='raised', font=("Arial Bold", 12))
+radio_kss.place(x=60, y=160)
 
 varData = IntVar()
 R1data = tk.Radiobutton(left_frame, text="Plot Data", variable=varData, value=1, bg='bisque', font='bold')
@@ -157,14 +162,16 @@ baseTime_var.place(x=90,y=70,width=40)
 #fdatatype_box.place(x=0,y=60)
 
 show_data_button = ttk.Button(borderTop_frame, command=lambda: [open_data_file(path_var.get(), fcombo_box.current())],
-                          text="Show Data File", style="MyButton.TButton")
+                              text="Show Data File", style="MyButton.TButton")
 show_data_button.place(x=140, y=5, width=120, height=30)
 
 # save_data_button = ttk.Button(borderTop_frame, command=lambda: [get_folder_path(path_var), update()],
 #                          text="Save Data File", style="MyButton.TButton")
 # save_data_button.place(x=260, y=5, width=120, height=30)
 
-make_plot_button = ttk.Button(borderTop_frame, command=lambda: [run_model(path_var.get(), fcombo_box.current(), plots_frame)], text="Make Plot", style="MyButton.TButton")
+make_plot_button = ttk.Button(borderTop_frame,
+                              command=lambda: [run_model(path_var.get(), fcombo_box.current(), plots_frame)],
+                              text="Make Plot", style="MyButton.TButton")
 make_plot_button.place(x=380, y=5, width=80, height=30)
 
 make_sleep_predictions_button = ttk.Button(borderTop_frame, command=lambda: [get_folder_path(path_var), update()],
